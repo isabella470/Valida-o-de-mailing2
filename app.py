@@ -8,11 +8,7 @@ from urllib.parse import urlparse
 import io
 import re
 
-# --- CONFIGURAÇÃO PRINCIPAL ---
-# ▼▼▼ AQUI: Altere o texto abaixo para ser EXATAMENTE igual ao cabeçalho da sua Coluna D ▼▼▼
-NOME_DA_COLUNA_DE_URLS = "start_url"  # Por exemplo: "URL", "Site", "Link do Site"
-# --- FIM DA CONFIGURAÇÃO ---
-
+# --- Não há mais seção de configuração de nomes de colunas ---
 
 # --- FUNÇÕES DE LÓGICA ---
 def extrair_dominio_limpo(url):
@@ -31,7 +27,7 @@ def transformar_url_para_csv(url: str) -> str:
     Pega uma URL normal do Google Sheets e a transforma em um link de download direto de CSV.
     """
     try:
-        match = re.search(r'/d/([a-zA-Z0-9-_]+)', url)
+        match = re.search(r'/d/([a-zA-Z0-B]+)', url)
         if match:
             sheet_id = match.group(1)
             return f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv"
@@ -42,11 +38,11 @@ def transformar_url_para_csv(url: str) -> str:
 
 # --- INTERFACE DO STREAMLIT ---
 st.set_page_config(page_title="Validador de Escopo", layout="centered")
-st.title("🚀 Painel de Validação de Escopo")
+st.title("🚀 Painel de Validação de Escopo Inteligente")
 st.markdown(
     """
-    Ajuste a permissão da sua planilha para **"Qualquer pessoa com o link pode ver"**.
-    Depois, cole o link normal da planilha abaixo e suba seu arquivo `.txt`.
+    Este aplicativo verifica os links de um arquivo `.txt` contra os links da **Coluna D** de uma planilha.
+    Se encontrar uma correspondência, trará **todas as informações** da linha correspondente.
     """
 )
 
@@ -76,13 +72,17 @@ if st.button("✅ Gerar Relatório", type="primary"):
                     st.write("🔄 Acessando a planilha...")
                     df_mailing = pd.read_csv(url_csv)
                     
-                    # <-- MUDANÇA AQUI 1: Usamos a variável para checar se a coluna de URL existe.
-                    colunas_necessarias = [NOME_DA_COLUNA_DE_URLS, 'id_boxnet', 'nome_boxnet', 'pais', 'estado', 'id klipbo']
-                    if not all(coluna in df_mailing.columns for coluna in colunas_necessarias):
-                        st.error(f"Uma ou mais colunas necessárias não foram encontradas na planilha. Verifique se os cabeçalhos estão corretos: {colunas_necessarias}")
+                    # --- MUDANÇA NA LÓGICA ---
+                    # 1. Verifica se a planilha tem pelo menos 4 colunas (A, B, C, D)
+                    if len(df_mailing.columns) < 4:
+                        st.error(f"Sua planilha tem menos de 4 colunas. Não foi possível encontrar a Coluna D.")
                     else:
-                        # <-- MUDANÇA AQUI 2: Usamos a variável para dizer qual coluna contém os URLs.
-                        df_mailing['dominio_limpo'] = df_mailing[NOME_DA_COLUNA_DE_URLS].apply(extrair_dominio_limpo)
+                        # 2. Pega o nome da quarta coluna (índice 3), seja ele qual for.
+                        nome_coluna_d = df_mailing.columns[3]
+                        st.write(f"Identificada a coluna de URLs para verificação: '{nome_coluna_d}' (Coluna D).")
+                        
+                        # 3. Cria a coluna de domínio limpo a partir da Coluna D
+                        df_mailing['dominio_limpo'] = df_mailing[nome_coluna_d].apply(extrair_dominio_limpo)
                         st.write(f"✅ Mailing com {len(df_mailing)} sites carregado.")
 
                         st.write("🔄 Carregando arquivo TXT...")
@@ -91,17 +91,19 @@ if st.button("✅ Gerar Relatório", type="primary"):
                         st.write(f"✅ Arquivo TXT com {len(df_verificacao)} links carregado.")
 
                         st.write("🔄 Cruzando informações...")
-                        # <-- MUDANÇA AQUI 3: Adicionamos a variável na lista de colunas a serem mescladas.
-                        colunas_para_mesclar = ['dominio_limpo', 'id_boxnet', 'nome_boxnet', NOME_DA_COLUNA_DE_URLS, 'pais', 'estado', 'id klipbo']
-                        resultado_merge = pd.merge(df_verificacao, df_mailing[colunas_para_mesclar], on='dominio_limpo', how='left')
+                        # 4. Faz o merge, trazendo TODAS as colunas de df_mailing
+                        resultado_merge = pd.merge(df_verificacao, df_mailing, on='dominio_limpo', how='left')
                         
-                        resultado_merge['Status'] = np.where(resultado_merge['id_boxnet'].notna(), 'DENTRO DO ESCOPO', 'FORA DO ESCOPO')
+                        # 5. Define o Status baseado na presença de qualquer dado da planilha (usamos a primeira coluna dela como referência)
+                        primeira_coluna_mailing = df_mailing.columns[0]
+                        resultado_merge['Status'] = np.where(resultado_merge[primeira_coluna_mailing].notna(), 'DENTRO DO ESCOPO', 'FORA DO ESCOPO')
                         
-                        # <-- MUDANÇA AQUI 4: Usamos a variável para renomear a coluna de URL no relatório final.
-                        resultado_merge.rename(columns={NOME_DA_COLUNA_DE_URLS: 'Link_no_Mailing'}, inplace=True)
-                        
-                        colunas_finais = ['Link_Original', 'Status', 'id_boxnet', 'id klipbo', 'nome_boxnet', 'Link_no_Mailing', 'pais', 'estado']
-                        resultado_final = resultado_merge.reindex(columns=colunas_finais)
+                        # 6. Organiza as colunas do resultado final
+                        # Pega todas as colunas originais do mailing
+                        colunas_do_mailing = list(df_mailing.columns)
+                        # Define a ordem final, colocando Status logo após Link_Original
+                        colunas_finais = ['Link_Original', 'Status'] + colunas_do_mailing
+                        resultado_final = resultado_merge[colunas_finais]
 
                         output = io.BytesIO()
                         with pd.ExcelWriter(output, engine='openpyxl') as writer:
@@ -118,4 +120,4 @@ if st.button("✅ Gerar Relatório", type="primary"):
                         )
                 except Exception as e:
                     st.error(f"❌ OCORREU UM ERRO: {e}")
-                    st.error("Verifique se a permissão da planilha está como 'Qualquer pessoa com o link pode ver' e se todos os nomes das colunas estão corretos.")
+                    st.error("Verifique se o link da planilha está correto e se a permissão é 'Qualquer pessoa com o link pode ver'.")
