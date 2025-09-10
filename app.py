@@ -19,8 +19,8 @@ def local_css(file_name="style.css"):
 local_css("style.css")
 
 # ---------- INTERFACE (somente um título + primeiro input visível) ----------
-st.title("🚀 Painel de Validação de Escopo Flexível")
-st.markdown("Agora você pode escolher qual coluna da sua planilha contém os URLs a serem verificados.")
+st.title("Painel de Validação de Escopo🎯📊")
+st.markdown("Aqui você pode escolher qual coluna da sua planilha contém os URLs a serem verificados.")
 
 # Passo 1: obter link (a partir daqui o resto só aparece se preencher)
 url_planilha = st.text_input(
@@ -105,3 +105,4 @@ if url_planilha:
                         file_name="resultado_comparacao.xlsx",
                         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                     )
+
