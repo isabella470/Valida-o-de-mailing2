@@ -11,23 +11,23 @@ import re
 st.set_page_config(page_title="Validador de Escopo", layout="centered")
 
 # =============================
-# CSS com fundo + estilos
+# CSS com fundo + vidro fosco
 # =============================
 st.markdown(
     """
     <style>
-    /* Fundo do app */
+    /* Fundo da aplicação */
     .stApp {
-        background-image: url("https://raw.githubusercontent.com/isabella470/Valida-o-de-mailing2/main/abre.jpg");
+        background-image: url("https://raw.githubusercontent.com/isabella470/Valida-o-de-mailing2/652f9add365cbf8c277f98b719cd1276dd0a5e52/Design%20sem%20nome.jpg");
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
         background-attachment: fixed;
     }
 
-    /* Contêiner principal com efeito vidro fosco */
+    /* Contêiner principal com vidro fosco leve */
     section.main > div {
-        background-color: rgba(0, 0, 0, 0.7);
+        background-color: rgba(0, 0, 0, 0.6); /* mais escuro para destacar o texto */
         backdrop-filter: blur(12px);
         border-radius: 20px;
         padding: 2rem;
@@ -64,10 +64,11 @@ st.markdown(
         border-color: #E03C3C;
     }
 
-    /* Inputs e uploader legíveis */
+    /* Inputs, textarea e uploader legíveis */
     .stTextInput > div > div > input,
     .stSelectbox > div > div,
-    .stFileUploader > div {
+    .stFileUploader > div,
+    .stTextArea > div > div > textarea {
         background-color: rgba(0,0,0,0.6);
         color: #FAFAFA;
         border-radius: 8px;
@@ -105,7 +106,7 @@ st.markdown(
 # Interface inicial
 # =============================
 st.title("Painel de Validação de Escopo 📊")
-st.markdown("Aqui você pode escolher qual coluna da sua planilha contém os URLs a serem verificados.")
+st.markdown("Escolha a coluna da sua planilha com URLs e como deseja comparar os links.")
 
 url_planilha = st.text_input(
     "Passo 1: Cole o link da sua planilha",
@@ -163,16 +164,37 @@ if url_planilha:
             index=3 if len(headers) > 3 else 0
         )
 
-        arquivo_txt = st.file_uploader("Passo 3: Suba seu arquivo .TXT com os links", type=["txt"])
+        st.markdown("**Passo 3: Escolha como deseja fornecer os links para comparação:**")
+        tab1, tab2 = st.tabs(["📄 Upload de TXT", "✏️ Colar links"])
+
+        # --- Opção 1: Upload de TXT ---
+        with tab1:
+            arquivo_txt = st.file_uploader("Suba seu arquivo .TXT com os links", type=["txt"])
+
+        # --- Opção 2: Colar links ---
+        with tab2:
+            links_colados = st.text_area(
+                "Cole seus links aqui (um por linha)",
+                placeholder="https://exemplo.com\nhttps://teste.com"
+            )
 
         if st.button("✅ Gerar Relatório"):
-            if arquivo_txt is None:
-                st.warning("Por favor, suba o arquivo .TXT.")
+            # Verificar se algum input foi fornecido
+            if (arquivo_txt is None) and (not links_colados.strip()):
+                st.warning("Por favor, forneça os links via arquivo ou colando na tela.")
             else:
                 with st.spinner("Processando..."):
-                    # Limpeza de domínios
+                    # Limpeza de domínios do mailing
                     df_mailing["dominio_limpo"] = df_mailing[coluna_url_selecionada].apply(extrair_dominio_limpo)
-                    df_verificacao = pd.read_csv(arquivo_txt, header=None, names=["Link_Original"])
+
+                    # Criar dataframe de verificação
+                    if arquivo_txt:
+                        df_verificacao = pd.read_csv(arquivo_txt, header=None, names=["Link_Original"])
+                    else:
+                        # Separar links colados por linha
+                        lista_links = [l.strip() for l in links_colados.strip().split("\n") if l.strip()]
+                        df_verificacao = pd.DataFrame(lista_links, columns=["Link_Original"])
+
                     df_verificacao["dominio_limpo"] = df_verificacao["Link_Original"].apply(extrair_dominio_limpo)
 
                     # Merge para verificação
