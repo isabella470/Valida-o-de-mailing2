@@ -2,21 +2,19 @@
 
 /* Estilo principal do aplicativo Streamlit */
 .stApp {
-    /* Substitua a URL pela imagem de fundo que você quer usar */
-    /* Lembre-se que a imagem precisa estar hospedada online (ex: no seu GitHub) */
-    background-image: url("![6965533](https://github.com/user-attachments/assets/d7b006f1-7c36-4378-a96a-1ba66d2175cd)");
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
+    /* URL da imagem de fundo (use o link raw do GitHub) */
+    background-image: url("https://raw.githubusercontent.com/usuario/repositorio/branch/caminho/para/imagem.png");
+    background-size: cover;           /* cobre toda a tela */
+    background-position: center;      /* centraliza a imagem */
+    background-repeat: no-repeat;     /* não repete a imagem */
+    background-attachment: fixed;     /* mantém fixa ao rolar */
 }
 
-/* Deixa os principais contêineres com um fundo semi-transparente e vidro fosco */
-/* Isso faz com que a imagem de fundo apareça através dos elementos */
+/* Deixa os principais contêineres com fundo semi-transparente e vidro fosco */
 section.main > div {
     background-color: rgba(14, 17, 23, 0.85); /* Fundo preto com 85% de opacidade */
-    backdrop-filter: blur(10px); /* Efeito de vidro fosco */
-    border-radius: 15px; /* Bordas arredondadas */
+    backdrop-filter: blur(10px);              /* Efeito de vidro fosco */
+    border-radius: 15px;                      /* Bordas arredondadas */
     padding: 2rem;
     box-shadow: 0 4px 12px rgba(0,0,0,0.4);
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -50,7 +48,7 @@ h1 {
 }
 
 .stButton > button:active {
-    background-color: #E03C3C; /* Um tom mais escuro para quando é clicado */
+    background-color: #E03C3C; /* Um tom mais escuro quando clicado */
     border-color: #E03C3C;
 }
 
