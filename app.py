@@ -27,28 +27,30 @@ st.markdown(
 
     /* Contêiner principal com efeito vidro fosco */
     section.main > div {
-        background-color: rgba(14, 17, 23, 0.85);
-        backdrop-filter: blur(10px);
-        border-radius: 15px;
+        background-color: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(12px);
+        border-radius: 20px;
         padding: 2rem;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.6);
         border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
-    /* Títulos */
-    h1 {
-        color: #FF4B4B;
-        text-align: center;
+    /* Títulos e textos com sombra */
+    h1, h2, h3, h4, h5, h6, p, span, label {
+        color: #FAFAFA;
+        text-shadow: 1px 1px 4px rgba(0,0,0,0.8);
     }
 
-    /* Botões */
+    /* Botões estilizados */
     .stButton > button {
         width: 100%;
-        border-radius: 5px;
+        border-radius: 8px;
         border: 1px solid #FF4B4B;
         background-color: transparent;
         color: #FF4B4B;
+        font-weight: bold;
         transition: all 0.2s ease-in-out;
+        box-shadow: 1px 1px 5px rgba(0,0,0,0.5);
     }
 
     .stButton > button:hover {
@@ -62,16 +64,37 @@ st.markdown(
         border-color: #E03C3C;
     }
 
-    /* Uploader de arquivos */
+    /* Inputs e uploader legíveis */
+    .stTextInput > div > div > input,
+    .stSelectbox > div > div,
     .stFileUploader > div {
-        border: 2px dashed rgba(255, 75, 75, 0.5);
-        background-color: rgba(255, 75, 75, 0.05);
-        border-radius: 10px;
+        background-color: rgba(0,0,0,0.6);
+        color: #FAFAFA;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 0.4rem;
     }
 
-    /* Texto geral */
-    body, .stTextInput > div > div > input, .stSelectbox > div > div {
-        color: #FAFAFA;
+    /* Uploader de arquivos com destaque */
+    .stFileUploader > div {
+        border: 2px dashed rgba(255, 75, 75, 0.6);
+        background-color: rgba(255, 75, 75, 0.08);
+        border-radius: 10px;
+        padding: 0.5rem;
+    }
+
+    /* Scrollbars customizadas */
+    ::-webkit-scrollbar {
+        width: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: rgba(255, 75, 75, 0.5);
+        border-radius: 5px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: rgba(0,0,0,0.2);
     }
     </style>
     """,
@@ -179,4 +202,3 @@ if url_planilha:
                         file_name="resultado_comparacao.xlsx",
                         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                     )
-
