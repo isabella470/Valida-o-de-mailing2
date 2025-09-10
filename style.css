@@ -1,45 +1,69 @@
-/* Fundo principal com gradiente suave e pattern de gráfico */
-[data-testid="stAppViewContainer"] {
-    background: linear-gradient(180deg, #ffffff 0%, #f4f8ff 100%);
-    background-image: url("https://www.transparenttextures.com/patterns/cubes.png"); /* lembra web/tech */
-    background-size: 300px;
-    color: #1a1a1a;
-    font-family: "Segoe UI", Arial, sans-serif;
+/* force layout claro */
+html, body, [data-testid="stAppViewContainer"], .block-container {
+  background: linear-gradient(180deg, #ffffff 0%, #f4f8ff 100%) !important;
+  color: #0a1a3c !important;
+  font-family: "Segoe UI", Arial, sans-serif !important;
 }
 
-/* Remove fundo preto da barra superior */
-[data-testid="stHeader"] {
-    background: none;
+/* remove o header padrão escuro do streamlit */
+[data-testid="stHeader"], header {
+  background: transparent !important;
 }
 
-/* Títulos */
+/* overlay sutil com gráfico (não bloqueia cliques) */
+body::before {
+  content: "";
+  position: fixed;
+  right: 0;
+  top: 0;
+  height: 100%;
+  width: 45%;
+  background-image: url('https://www.svgrepo.com/show/331725/analytics.svg');
+  background-repeat: no-repeat;
+  background-position: center right;
+  background-size: contain;
+  opacity: 0.08;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* garante que o conteúdo fique acima do overlay */
+[data-testid="stAppViewContainer"] > .main, .block-container {
+  position: relative;
+  z-index: 1;
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-top: 40px;
+}
+
+/* títulos */
 h1, h2, h3, h4 {
-    color: #0a1a3c;
-    font-weight: 700;
+  color: #0a1a3c !important;
+  font-weight: 700 !important;
 }
 
-/* Inputs */
-.stTextInput input {
-    border: 1.5px solid #0a1a3c;
-    border-radius: 8px;
-    padding: 8px 12px;
-    font-size: 16px;
-    color: #0a1a3c;
-    background-color: #ffffff;
+/* inputs */
+.stTextInput input, input[type="text"] {
+  background: #ffffff !important;
+  color: #0a1a3c !important;
+  border: 1.5px solid #0a1a3c !important;
+  border-radius: 8px !important;
+  padding: 10px 12px !important;
 }
 
-/* Botões */
+/* botões */
 .stButton>button {
-    background-color: #0a1a3c;
-    color: white;
-    border-radius: 8px;
-    padding: 10px 24px;
-    font-size: 16px;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    border: none;
+  background: #0a1a3c !important;
+  color: #ffffff !important;
+  border-radius: 8px !important;
+  padding: 10px 24px !important;
+  border: none !important;
+}
+.stButton>button:hover { background: #133366 !important; }
+
+/* sidebar (opcional) */
+[data-testid="stSidebar"] {
+  background: #f8f9fb !important;
 }
 
-.stButton>button:hover {
-    background-color: #133366;
-}
