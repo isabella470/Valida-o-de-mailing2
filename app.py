@@ -11,21 +11,21 @@ import re
 st.set_page_config(page_title="Validador de Escopo", layout="centered")
 
 # =============================
-# CSS injetado diretamente
+# CSS com fundo + estilos
 # =============================
 st.markdown(
     """
     <style>
     /* Fundo do app */
     .stApp {
-        background-image: url("https://raw.githubusercontent.com/seu-usuario/seu-repositorio/main/imagem.png");
+        background-image: url("https://raw.githubusercontent.com/isabella470/Valida-o-de-mailing2/main/6965533.jpg");
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
         background-attachment: fixed;
     }
 
-    /* Contêiner principal com vidro fosco */
+    /* Contêiner principal com efeito vidro fosco */
     section.main > div {
         background-color: rgba(14, 17, 23, 0.85);
         backdrop-filter: blur(10px);
@@ -93,7 +93,8 @@ url_planilha = st.text_input(
 # Funções utilitárias
 # =============================
 def extrair_dominio_limpo(url: str) -> str:
-    if not isinstance(url, str): return None
+    if not isinstance(url, str): 
+        return None
     try:
         url = url.strip().lower()
         if not url.startswith(("http://", "https://")):
