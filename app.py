@@ -13,10 +13,11 @@ def local_css(file_name):
 
 local_css("style.css")
 
-st.title("🚀 Painel de Validação de Escopo Flexível")
-st.write("Agora você pode escolher qual coluna da sua planilha contém os URLs a serem verificados.")
+# Conteúdo
+st.title("Painel de Validação de Escopo")
+st.write("Aqui você pode escolher qual coluna da sua planilha contém os URLs a serem verificados.")
 
-st.text_input("Cole o link da sua planilha Google Sheets")
+link = st.text_input("Cole o link da sua planilha Google Sheets")
 st.button("Validar")
 
 # --- FUNÇÕES DE LÓGICA (usando a versão exata do Colab) ---
@@ -134,4 +135,5 @@ if url_planilha:
     except Exception as e:
         st.error(f"❌ OCORREU UM ERRO AO ACESSAR A PLANILHA: {e}")
         st.error("Verifique o link e se a permissão da planilha é 'Qualquer pessoa com o link pode ver'.")
+
 
