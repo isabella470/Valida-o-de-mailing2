@@ -1,13 +1,21 @@
-/* Fundo branco e texto escuro */
-body, [data-testid="stAppViewContainer"] {
-    background-color: #ffffff !important;
+/* Fundo principal */
+[data-testid="stAppViewContainer"] {
+    background-color: #ffffff;
+    background-image: url("https://www.transparenttextures.com/patterns/white-carbon.png"); /* textura leve */
+    background-size: cover;
+    background-repeat: no-repeat;
     color: #1a1a1a;
     font-family: "Segoe UI", Arial, sans-serif;
 }
 
+/* Barra superior (remover fundo preto) */
+[data-testid="stHeader"] {
+    background: none;
+}
+
 /* Títulos */
 h1, h2, h3, h4 {
-    color: #0a1a3c; /* azul escuro */
+    color: #0a1a3c;
     font-weight: 700;
 }
 
@@ -18,6 +26,7 @@ h1, h2, h3, h4 {
     padding: 8px 12px;
     font-size: 16px;
     color: #0a1a3c;
+    background-color: #ffffff;
 }
 
 /* Botões */
@@ -33,12 +42,12 @@ h1, h2, h3, h4 {
 }
 
 .stButton>button:hover {
-    background-color: #133366; /* azul escuro um pouco mais claro */
+    background-color: #133366;
 }
 
-/* Caixas (como expander, sidebar etc.) */
-.css-1d391kg, .stSidebar {
-    background-color: #f9f9f9;
-    border-radius: 12px;
-    padding: 10px;
+/* Sidebar */
+.stSidebar {
+    background-color: #f8f9fb;
+    border-right: 1px solid #e6e6e6;
 }
+
