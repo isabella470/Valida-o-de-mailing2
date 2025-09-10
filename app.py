@@ -5,30 +5,93 @@ from urllib.parse import urlparse
 import io
 import re
 
-# ------------- CONFIG (tem que vir antes de qualquer st.* que renderize) -------------
+# =============================
+# Configuração da página
+# =============================
 st.set_page_config(page_title="Validador de Escopo", layout="centered")
 
-# Carrega CSS
-def local_css(file_name="style.css"):
-    try:
-        with open(file_name, "r", encoding="utf-8") as f:
-            st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
-    except FileNotFoundError:
-        st.warning("Arquivo style.css não encontrado. Verifique o diretório.")
+# =============================
+# CSS injetado diretamente
+# =============================
+st.markdown(
+    """
+    <style>
+    /* Fundo do app */
+    .stApp {
+        background-image: url("https://raw.githubusercontent.com/seu-usuario/seu-repositorio/main/imagem.png");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }
 
-local_css("style.css")
+    /* Contêiner principal com vidro fosco */
+    section.main > div {
+        background-color: rgba(14, 17, 23, 0.85);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
 
-# ---------- INTERFACE (somente um título + primeiro input visível) ----------
-st.title("Painel de Validação de Escopo🎯📊")
+    /* Títulos */
+    h1 {
+        color: #FF4B4B;
+        text-align: center;
+    }
+
+    /* Botões */
+    .stButton > button {
+        width: 100%;
+        border-radius: 5px;
+        border: 1px solid #FF4B4B;
+        background-color: transparent;
+        color: #FF4B4B;
+        transition: all 0.2s ease-in-out;
+    }
+
+    .stButton > button:hover {
+        background-color: #FF4B4B;
+        color: white;
+        border-color: #FF4B4B;
+    }
+
+    .stButton > button:active {
+        background-color: #E03C3C;
+        border-color: #E03C3C;
+    }
+
+    /* Uploader de arquivos */
+    .stFileUploader > div {
+        border: 2px dashed rgba(255, 75, 75, 0.5);
+        background-color: rgba(255, 75, 75, 0.05);
+        border-radius: 10px;
+    }
+
+    /* Texto geral */
+    body, .stTextInput > div > div > input, .stSelectbox > div > div {
+        color: #FAFAFA;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+# =============================
+# Interface inicial
+# =============================
+st.title("Painel de Validação de Escopo 🎯📊")
 st.markdown("Aqui você pode escolher qual coluna da sua planilha contém os URLs a serem verificados.")
 
-# Passo 1: obter link (a partir daqui o resto só aparece se preencher)
 url_planilha = st.text_input(
     "Passo 1: Cole o link da sua planilha Google Sheets",
     placeholder="https://docs.google.com/spreadsheets/d/..."
 )
 
-# ---------------- funções utilitárias ----------------
+# =============================
+# Funções utilitárias
+# =============================
 def extrair_dominio_limpo(url: str) -> str:
     if not isinstance(url, str): return None
     try:
@@ -52,7 +115,9 @@ def transformar_url_para_csv(url: str) -> str:
         pass
     return None
 
-# ------------- lógica que aparece só quando usuário cola a planilha -------------
+# =============================
+# Lógica de validação
+# =============================
 if url_planilha:
     url_csv = transformar_url_para_csv(url_planilha)
     if url_csv is None:
@@ -81,18 +146,26 @@ if url_planilha:
                 st.warning("Por favor, suba o arquivo .TXT.")
             else:
                 with st.spinner("Processando..."):
+                    # Limpeza de domínios
                     df_mailing["dominio_limpo"] = df_mailing[coluna_url_selecionada].apply(extrair_dominio_limpo)
                     df_verificacao = pd.read_csv(arquivo_txt, header=None, names=["Link_Original"])
                     df_verificacao["dominio_limpo"] = df_verificacao["Link_Original"].apply(extrair_dominio_limpo)
 
+                    # Merge para verificação
                     resultado_merge = pd.merge(df_verificacao, df_mailing, on="dominio_limpo", how="left")
                     primeira_coluna_mailing = df_mailing.columns[0]
-                    resultado_merge["Status"] = np.where(resultado_merge[primeira_coluna_mailing].notna(), "DENTRO DO ESCOPO", "FORA DO ESCOPO")
+                    resultado_merge["Status"] = np.where(
+                        resultado_merge[primeira_coluna_mailing].notna(),
+                        "DENTRO DO ESCOPO",
+                        "FORA DO ESCOPO"
+                    )
 
+                    # Seleciona colunas finais
                     colunas_do_mailing = [c for c in df_mailing.columns if c != "dominio_limpo"]
                     colunas_finais = ["Link_Original", "Status"] + colunas_do_mailing
                     resultado_final = resultado_merge[colunas_finais]
 
+                    # Exportar para Excel
                     output = io.BytesIO()
                     with pd.ExcelWriter(output, engine="openpyxl") as writer:
                         resultado_final.to_excel(writer, index=False, sheet_name="Resultado")
@@ -105,4 +178,3 @@ if url_planilha:
                         file_name="resultado_comparacao.xlsx",
                         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                     )
-
