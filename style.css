@@ -1,13 +1,13 @@
-/* Fundo principal com detalhe em azul */
+/* Fundo principal com gradiente suave e pattern de gráfico */
 [data-testid="stAppViewContainer"] {
     background: linear-gradient(180deg, #ffffff 0%, #f4f8ff 100%);
-    background-image: url("https://www.transparenttextures.com/patterns/graph-paper.png");
-    background-repeat: no-repeat;
-    background-position: right bottom;
-    background-size: 400px;
+    background-image: url("https://www.transparenttextures.com/patterns/cubes.png"); /* lembra web/tech */
+    background-size: 300px;
+    color: #1a1a1a;
+    font-family: "Segoe UI", Arial, sans-serif;
 }
 
-/* Barra superior */
+/* Remove fundo preto da barra superior */
 [data-testid="stHeader"] {
     background: none;
 }
@@ -37,5 +37,9 @@ h1, h2, h3, h4 {
     font-size: 16px;
     font-weight: 600;
     transition: all 0.3s ease;
-    border:
+    border: none;
+}
 
+.stButton>button:hover {
+    background-color: #133366;
+}
