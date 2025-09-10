@@ -1,0 +1,44 @@
+/* Fundo branco e texto escuro */
+body, [data-testid="stAppViewContainer"] {
+    background-color: #ffffff !important;
+    color: #1a1a1a;
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+/* Títulos */
+h1, h2, h3, h4 {
+    color: #0a1a3c; /* azul escuro */
+    font-weight: 700;
+}
+
+/* Inputs */
+.stTextInput input {
+    border: 1.5px solid #0a1a3c;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 16px;
+    color: #0a1a3c;
+}
+
+/* Botões */
+.stButton>button {
+    background-color: #0a1a3c;
+    color: white;
+    border-radius: 8px;
+    padding: 10px 24px;
+    font-size: 16px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.stButton>button:hover {
+    background-color: #133366; /* azul escuro um pouco mais claro */
+}
+
+/* Caixas (como expander, sidebar etc.) */
+.css-1d391kg, .stSidebar {
+    background-color: #f9f9f9;
+    border-radius: 12px;
+    padding: 10px;
+}
