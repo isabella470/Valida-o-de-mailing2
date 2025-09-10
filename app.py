@@ -18,7 +18,7 @@ st.markdown(
     <style>
     /* Fundo da aplicação */
     .stApp {
-        background-image: url("https://raw.githubusercontent.com/isabella470/Valida-o-de-mailing2/652f9add365cbf8c277f98b719cd1276dd0a5e52/Design%20sem%20nome.jpg");
+        background-image: url("https://raw.githubusercontent.com/isabella470/Valida-o-de-mailing2/3d6b54a4c8b1b593e94856a84dd83d5e089404bf/abre.jpg");
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
