@@ -6,6 +6,18 @@ import numpy as np
 from urllib.parse import urlparse
 import io
 import re
+# Carregar CSS
+def local_css(file_name):
+    with open(file_name) as f:
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+
+local_css("style.css")
+
+st.title("🚀 Painel de Validação de Escopo Flexível")
+st.write("Agora você pode escolher qual coluna da sua planilha contém os URLs a serem verificados.")
+
+st.text_input("Cole o link da sua planilha Google Sheets")
+st.button("Validar")
 
 # --- FUNÇÕES DE LÓGICA (usando a versão exata do Colab) ---
 def extrair_dominio_limpo(url: str) -> str:
@@ -122,3 +134,4 @@ if url_planilha:
     except Exception as e:
         st.error(f"❌ OCORREU UM ERRO AO ACESSAR A PLANILHA: {e}")
         st.error("Verifique o link e se a permissão da planilha é 'Qualquer pessoa com o link pode ver'.")
+
