@@ -11,11 +11,12 @@ import re
 st.set_page_config(page_title="Validador de Escopo", layout="centered")
 
 # =============================
-# CSS com fundo + estilos
+# CSS com fundo + vidro fosco
 # =============================
 st.markdown(
     """
     <style>
+    /* Fundo da aplicação */
     .stApp {
         background-image: url("https://raw.githubusercontent.com/isabella470/Valida-o-de-mailing2/main/abre.jpg");
         background-size: cover;
@@ -24,20 +25,32 @@ st.markdown(
         background-attachment: fixed;
     }
 
-    section.main > div {
-        background-color: rgba(0, 0, 0, 0.7);
+    /* Overlay vidro fosco */
+    .stApp::before {
+        content: "";
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.3);
         backdrop-filter: blur(12px);
+        z-index: -1;
+    }
+
+    /* Contêiner principal com leve vidro fosco */
+    section.main > div {
+        background-color: rgba(0, 0, 0, 0.5);
         border-radius: 20px;
         padding: 2rem;
         box-shadow: 0 8px 20px rgba(0,0,0,0.6);
         border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
+    /* Títulos e textos com sombra */
     h1, h2, h3, h4, h5, h6, p, span, label {
         color: #FAFAFA;
         text-shadow: 1px 1px 4px rgba(0,0,0,0.8);
     }
 
+    /* Botões estilizados */
     .stButton > button {
         width: 100%;
         border-radius: 8px;
@@ -60,6 +73,7 @@ st.markdown(
         border-color: #E03C3C;
     }
 
+    /* Inputs e uploader legíveis */
     .stTextInput > div > div > input,
     .stSelectbox > div > div,
     .stFileUploader > div,
@@ -71,6 +85,7 @@ st.markdown(
         padding: 0.4rem;
     }
 
+    /* Uploader de arquivos com destaque */
     .stFileUploader > div {
         border: 2px dashed rgba(255, 75, 75, 0.6);
         background-color: rgba(255, 75, 75, 0.08);
@@ -78,6 +93,7 @@ st.markdown(
         padding: 0.5rem;
     }
 
+    /* Scrollbars customizadas */
     ::-webkit-scrollbar {
         width: 10px;
     }
