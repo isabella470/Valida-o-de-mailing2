@@ -1,71 +1,60 @@
-import streamlit as st
+/* Arquivo: style.css */
 
-# Injetando CSS diretamente no Streamlit
-st.markdown(
-    """
-    <style>
-    /* Fundo do app */
-    .stApp {
-        background-image: url("https://raw.githubusercontent.com/usuario/repositorio/branch/caminho/para/imagem.png");
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-    }
+/* Estilo principal do aplicativo Streamlit */
+.stApp {
+    /* URL da imagem de fundo (use o link raw do GitHub) */
+    background-image: url("https://raw.githubusercontent.com/usuario/repositorio/branch/caminho/para/imagem.png");
+    background-size: cover;           /* cobre toda a tela */
+    background-position: center;      /* centraliza a imagem */
+    background-repeat: no-repeat;     /* não repete a imagem */
+    background-attachment: fixed;     /* mantém fixa ao rolar */
+}
 
-    /* Contêiner principal com vidro fosco */
-    section.main > div {
-        background-color: rgba(14, 17, 23, 0.85);
-        backdrop-filter: blur(10px);
-        border-radius: 15px;
-        padding: 2rem;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-    }
+/* Deixa os principais contêineres com fundo semi-transparente e vidro fosco */
+section.main > div {
+    background-color: rgba(14, 17, 23, 0.85); /* Fundo preto com 85% de opacidade */
+    backdrop-filter: blur(10px);              /* Efeito de vidro fosco */
+    border-radius: 15px;                      /* Bordas arredondadas */
+    padding: 2rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
 
-    /* Títulos */
-    h1 {
-        color: #FF4B4B;
-        text-align: center;
-    }
+/* Cor do texto principal */
+body, .stTextInput > div > div > input, .stSelectbox > div > div {
+    color: #FAFAFA;
+}
 
-    /* Botões */
-    .stButton > button {
-        width: 100%;
-        border-radius: 5px;
-        border: 1px solid #FF4B4B;
-        background-color: transparent;
-        color: #FF4B4B;
-        transition: all 0.2s ease-in-out;
-    }
+/* Estilo do título principal */
+h1 {
+    color: #FF4B4B; /* Cor de destaque, ex: vermelho */
+    text-align: center;
+}
 
-    .stButton > button:hover {
-        background-color: #FF4B4B;
-        color: white;
-        border-color: #FF4B4B;
-    }
+/* Estilo dos botões */
+.stButton > button {
+    width: 100%;
+    border-radius: 5px;
+    border: 1px solid #FF4B4B;
+    background-color: transparent;
+    color: #FF4B4B;
+    transition: all 0.2s ease-in-out;
+}
 
-    .stButton > button:active {
-        background-color: #E03C3C;
-        border-color: #E03C3C;
-    }
+.stButton > button:hover {
+    background-color: #FF4B4B;
+    color: white;
+    border-color: #FF4B4B;
+}
 
-    /* Uploader de arquivos */
-    .stFileUploader > div {
-        border: 2px dashed rgba(255, 75, 75, 0.5);
-        background-color: rgba(255, 75, 75, 0.05);
-        border-radius: 10px;
-    }
+.stButton > button:active {
+    background-color: #E03C3C; /* Um tom mais escuro quando clicado */
+    border-color: #E03C3C;
+}
 
-    /* Texto geral */
-    body, .stTextInput > div > div > input, .stSelectbox > div > div {
-        color: #FAFAFA;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
-
-# Conteúdo do app
-st.title("Meu App Streamlit com fundo personalizado")
-st.button("Clique aqui")
+/* Estilo do uploader de arquivo */
+.stFileUploader > div {
+    border: 2px dashed rgba(255, 75, 75, 0.5);
+    background-color: rgba(255, 75, 75, 0.05);
+    border-radius: 10px;
+}
