@@ -1,14 +1,13 @@
-/* Fundo principal */
+/* Fundo principal com detalhe em azul */
 [data-testid="stAppViewContainer"] {
-    background-color: #ffffff;
-    background-image: url("https://www.transparenttextures.com/patterns/white-carbon.png"); /* textura leve */
-    background-size: cover;
+    background: linear-gradient(180deg, #ffffff 0%, #f4f8ff 100%);
+    background-image: url("https://www.transparenttextures.com/patterns/graph-paper.png");
     background-repeat: no-repeat;
-    color: #1a1a1a;
-    font-family: "Segoe UI", Arial, sans-serif;
+    background-position: right bottom;
+    background-size: 400px;
 }
 
-/* Barra superior (remover fundo preto) */
+/* Barra superior */
 [data-testid="stHeader"] {
     background: none;
 }
@@ -38,16 +37,5 @@ h1, h2, h3, h4 {
     font-size: 16px;
     font-weight: 600;
     transition: all 0.3s ease;
-    border: none;
-}
-
-.stButton>button:hover {
-    background-color: #133366;
-}
-
-/* Sidebar */
-.stSidebar {
-    background-color: #f8f9fb;
-    border-right: 1px solid #e6e6e6;
-}
+    border:
 
