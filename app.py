@@ -81,11 +81,11 @@ st.markdown(
 # =============================
 # Interface inicial
 # =============================
-st.title("Painel de Validação de Escopo 🎯📊")
+st.title("Painel de Validação de Escopo 📊")
 st.markdown("Aqui você pode escolher qual coluna da sua planilha contém os URLs a serem verificados.")
 
 url_planilha = st.text_input(
-    "Passo 1: Cole o link da sua planilha Google Sheets",
+    "Passo 1: Cole o link da sua planilha",
     placeholder="https://docs.google.com/spreadsheets/d/..."
 )
 
@@ -179,3 +179,4 @@ if url_planilha:
                         file_name="resultado_comparacao.xlsx",
                         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                     )
+
