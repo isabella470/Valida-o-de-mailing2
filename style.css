@@ -1,69 +1,62 @@
-/* force layout claro */
-html, body, [data-testid="stAppViewContainer"], .block-container {
-  background: linear-gradient(180deg, #ffffff 0%, #f4f8ff 100%) !important;
-  color: #0a1a3c !important;
-  font-family: "Segoe UI", Arial, sans-serif !important;
+/* Arquivo: style.css */
+
+/* Estilo principal do aplicativo Streamlit */
+.stApp {
+    /* Substitua a URL pela imagem de fundo que você quer usar */
+    /* Lembre-se que a imagem precisa estar hospedada online (ex: no seu GitHub) */
+    background-image: url("https://raw.githubusercontent.com/SEU_USUARIO/SEU_REPOSITORIO/main/sua_imagem_de_fundo.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
 }
 
-/* remove o header padrão escuro do streamlit */
-[data-testid="stHeader"], header {
-  background: transparent !important;
+/* Deixa os principais contêineres com um fundo semi-transparente e vidro fosco */
+/* Isso faz com que a imagem de fundo apareça através dos elementos */
+section.main > div {
+    background-color: rgba(14, 17, 23, 0.85); /* Fundo preto com 85% de opacidade */
+    backdrop-filter: blur(10px); /* Efeito de vidro fosco */
+    border-radius: 15px; /* Bordas arredondadas */
+    padding: 2rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* overlay sutil com gráfico (não bloqueia cliques) */
-body::before {
-  content: "";
-  position: fixed;
-  right: 0;
-  top: 0;
-  height: 100%;
-  width: 45%;
-  background-image: url('https://www.svgrepo.com/show/331725/analytics.svg');
-  background-repeat: no-repeat;
-  background-position: center right;
-  background-size: contain;
-  opacity: 0.08;
-  pointer-events: none;
-  z-index: 0;
+/* Cor do texto principal */
+body, .stTextInput > div > div > input, .stSelectbox > div > div {
+    color: #FAFAFA;
 }
 
-/* garante que o conteúdo fique acima do overlay */
-[data-testid="stAppViewContainer"] > .main, .block-container {
-  position: relative;
-  z-index: 1;
-  max-width: 1000px;
-  margin-left: auto;
-  margin-right: auto;
-  padding-top: 40px;
+/* Estilo do título principal */
+h1 {
+    color: #FF4B4B; /* Cor de destaque, ex: vermelho */
+    text-align: center;
 }
 
-/* títulos */
-h1, h2, h3, h4 {
-  color: #0a1a3c !important;
-  font-weight: 700 !important;
+/* Estilo dos botões */
+.stButton > button {
+    width: 100%;
+    border-radius: 5px;
+    border: 1px solid #FF4B4B;
+    background-color: transparent;
+    color: #FF4B4B;
+    transition: all 0.2s ease-in-out;
 }
 
-/* inputs */
-.stTextInput input, input[type="text"] {
-  background: #ffffff !important;
-  color: #0a1a3c !important;
-  border: 1.5px solid #0a1a3c !important;
-  border-radius: 8px !important;
-  padding: 10px 12px !important;
+.stButton > button:hover {
+    background-color: #FF4B4B;
+    color: white;
+    border-color: #FF4B4B;
 }
 
-/* botões */
-.stButton>button {
-  background: #0a1a3c !important;
-  color: #ffffff !important;
-  border-radius: 8px !important;
-  padding: 10px 24px !important;
-  border: none !important;
-}
-.stButton>button:hover { background: #133366 !important; }
-
-/* sidebar (opcional) */
-[data-testid="stSidebar"] {
-  background: #f8f9fb !important;
+.stButton > button:active {
+    background-color: #E03C3C; /* Um tom mais escuro para quando é clicado */
+    border-color: #E03C3C;
 }
 
+/* Estilo do uploader de arquivo */
+.stFileUploader > div {
+    border: 2px dashed rgba(255, 75, 75, 0.5);
+    background-color: rgba(255, 75, 75, 0.05);
+    border-radius: 10px;
+}
