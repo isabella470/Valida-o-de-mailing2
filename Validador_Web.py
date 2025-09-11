@@ -96,7 +96,7 @@ st.markdown(
 # =============================
 # Interface inicial
 # =============================
-st.title("Painel de Validação de Escopo 📊")
+st.title("Painel Escopo Web 📊")
 st.markdown("Escolha a coluna da sua planilha com URLs e como deseja comparar os links.")
 
 url_planilha = st.text_input(
@@ -209,3 +209,4 @@ if url_planilha:
                         file_name="resultado_comparacao.xlsx",
                         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                     )
+
