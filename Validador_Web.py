@@ -11,7 +11,7 @@ import re
 st.set_page_config(page_title="Validador de Escopo", layout="centered")
 
 # =============================
-# CSS com fundo + vidro fosco ATUALIZADO
+# CSS com o tema Azul-Royal
 # =============================
 st.markdown(
     """
@@ -37,34 +37,34 @@ st.markdown(
 
     /* Títulos e textos com sombra */
     h1, h2, h3, h4, h5, h6, p, span, label {
-        color: #0D3B66; /* <<-- AQUI ESTÁ A MUDANÇA: Azul bem escuro */
-        text-shadow: 0 0 8px rgba(137, 207, 240, 0.7); /* <<-- E a sombra clara para contraste */
+        color: #4169E1; /* Azul Royal, escuro e vibrante */
+        text-shadow: 0 0 6px rgba(0, 0, 0, 0.7); /* Sombra escura para dar profundidade */
     }
 
-    /* Botões estilizados com o tema azul claro para se destacarem */
+    /* Botões estilizados com o novo tema azul-royal */
     .stButton > button {
         width: 100%;
         border-radius: 8px;
-        border: 1px solid #89CFF0;
+        border: 1px solid #4169E1;
         background-color: transparent;
-        color: #89CFF0;
+        color: #4169E1;
         font-weight: bold;
         transition: all 0.2s ease-in-out;
         box-shadow: 1px 1px 5px rgba(0,0,0,0.5);
     }
 
     .stButton > button:hover {
-        background-color: #89CFF0;
-        color: #002366;
-        border-color: #89CFF0;
+        background-color: #4169E1;
+        color: #FFFFFF; /* Texto branco para melhor contraste no botão azul */
+        border-color: #4169E1;
     }
 
     .stButton > button:active {
-        background-color: #78b5d6;
-        border-color: #78b5d6;
+        background-color: #3557bd; /* Tom mais escuro para o clique */
+        border-color: #3557bd;
     }
 
-    /* Inputs, textarea e uploader legíveis com tema azul */
+    /* Inputs, textarea e uploader legíveis com o novo tema */
     .stTextInput > div > div > input,
     .stSelectbox > div > div,
     .stFileUploader > div,
@@ -72,25 +72,25 @@ st.markdown(
         background-color: rgba(0,0,0,0.6);
         color: #FAFAFA;
         border-radius: 8px;
-        border: 1px solid rgba(137, 207, 240, 0.4);
+        border: 1px solid rgba(65, 105, 225, 0.5); /* Borda azul sutil */
         padding: 0.4rem;
     }
 
     /* Uploader de arquivos com destaque azul */
     .stFileUploader > div {
-        border: 2px dashed rgba(137, 207, 240, 0.6);
-        background-color: rgba(137, 207, 240, 0.08);
+        border: 2px dashed rgba(65, 105, 225, 0.6);
+        background-color: rgba(65, 105, 225, 0.1);
         border-radius: 10px;
         padding: 0.5rem;
     }
 
-    /* Scrollbars customizadas com tema azul */
+    /* Scrollbars customizadas com o tema azul */
     ::-webkit-scrollbar {
         width: 10px;
     }
 
     ::-webkit-scrollbar-thumb {
-        background: rgba(137, 207, 240, 0.5);
+        background: rgba(65, 105, 225, 0.6); /* Scrollbar azul-royal */
         border-radius: 5px;
     }
 
