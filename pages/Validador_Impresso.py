@@ -12,7 +12,7 @@ st.markdown(
     <style>
     /* Fundo da aplicação */
     .stApp {
-        background-image: url("https://raw.githubusercontent.com/isabella470/Valida-o-de-mailing2/main/Gemini_Generated_Image_fv75gbfv75gbfv75.png"); /* <<-- NOVA IMAGEM DE FUNDO AQUI */
+        background-image: url("https://raw.githubusercontent.com/isabella470/Valida-o-de-mailing2/main/Gemini_Generated_Image_9p12259p12259p12.png"); /* <<-- NOVA IMAGEM DE FUNDO AQUI */
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
