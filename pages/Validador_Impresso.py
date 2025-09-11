@@ -2,19 +2,10 @@
 import streamlit as st
 import pandas as pd
 import re
+import io
 
 # =============================
-# Configuração da página
-# =============================
-st.set_page_config(
-    page_title="Validador de Escopo Impresso", 
-    layout="centered",
-    page_icon="📰"
-)
-
-# =============================
-# Reaplicar o CSS para manter a consistência visual
-# (O ideal seria colocar isso em um módulo compartilhado, mas para simplificar, vamos repetir)
+# CSS (mantido)
 # =============================
 st.markdown(
     """
@@ -43,9 +34,16 @@ st.markdown(
     }
     
     .stTextInput > div > div > input,
+    .stTextArea > div > div > textarea,
+    .stMultiSelect > div > div,
     .stSelectbox > div > div {
         background-color: rgba(0,0,0,0.6);
         color: #FAFAFA;
+    }
+
+    .stFileUploader > div {
+        border: 2px dashed rgba(0, 200, 83, 0.6);
+        background-color: rgba(0, 200, 83, 0.08);
     }
     
     .stButton > button {
@@ -72,7 +70,7 @@ st.markdown(
 
 
 # =============================
-# Função utilitária (copiada para esta página)
+# Função utilitária (mantida)
 # =============================
 def transformar_url_para_csv(url: str) -> str:
     try:
@@ -88,21 +86,24 @@ def transformar_url_para_csv(url: str) -> str:
 # Interface da página
 # =============================
 st.title("Painel de Validação de Impresso 📰")
-st.markdown("Busque por um veículo na sua planilha base de mailing e veja todas as informações.")
+st.markdown("Busque por um ou mais veículos na sua planilha base de mailing, com filtro opcional por **região**.")
 
 url_planilha = st.text_input(
     "Passo 1: Cole o link da sua planilha base (Google Sheets)",
     placeholder="https://docs.google.com/spreadsheets/d/..."
 )
 
-# Cache para não recarregar a planilha toda vez que o usuário digitar algo
 @st.cache_data
 def carregar_planilha(url_csv):
     df = pd.read_csv(url_csv)
+    # Garante que as colunas de texto não sejam interpretadas como outros tipos
+    for col in df.columns:
+        if df[col].dtype == 'object':
+            df[col] = df[col].astype(str)
     return df
 
 # =============================
-# Lógica de busca
+# Lógica de busca ATUALIZADA
 # =============================
 if url_planilha:
     url_csv = transformar_url_para_csv(url_planilha)
@@ -115,33 +116,85 @@ if url_planilha:
             st.success("Planilha lida com sucesso!")
 
             headers = list(df_mailing.columns)
-            coluna_veiculo = st.selectbox(
-                "Passo 2: Qual coluna contém o nome do 'Veículo'?",
-                options=headers,
-                index=0  # Sugere a primeira coluna por padrão
-            )
+            
+            # --- Passo 2: Seleção das colunas ---
+            st.markdown("**Passo 2: Selecione as colunas para a busca**")
+            col1, col2 = st.columns(2)
+            with col1:
+                coluna_veiculo = st.selectbox(
+                    "Coluna do 'Veículo'",
+                    options=headers,
+                    index=0
+                )
+            with col2:
+                coluna_regiao = st.selectbox(
+                    "Coluna da 'Região'",  # <-- Texto alterado aqui
+                    options=headers,
+                    index=1 if len(headers) > 1 else 0
+                )
 
-            termo_busca = st.text_input(
-                "Passo 3: Digite o nome do veículo que deseja buscar",
-                placeholder="Ex: Folha de S.Paulo"
-            )
+            # --- Passo 3: Filtro Opcional de Região ---
+            st.markdown("**Passo 3: Restringir a busca por região?**") # <-- Texto alterado aqui
+            filtrar_regiao = st.toggle("Ativar filtro de região") # <-- Texto alterado aqui
 
-            if st.button("🔎 Buscar Veículo"):
-                if not termo_busca.strip():
-                    st.warning("Por favor, digite um nome para buscar.")
+            regioes_selecionadas = []
+            if filtrar_regiao:
+                # Pega valores únicos da coluna de região, remove nulos (NaN) e ordena
+                regioes_unicas = sorted(df_mailing[coluna_regiao].dropna().unique())
+                regioes_selecionadas = st.multiselect(
+                    "Selecione uma ou mais regiões", # <-- Texto alterado aqui
+                    options=regioes_unicas
+                )
+
+            # --- Passo 4: Fornecer os nomes dos veículos ---
+            st.markdown("**Passo 4: Forneça os nomes dos veículos para buscar**")
+            tab1, tab2 = st.tabs(["✏️ Digitar Nomes", "📄 Upload de TXT"])
+
+            with tab1:
+                nomes_colados = st.text_area(
+                    "Cole os nomes aqui (um por linha)",
+                    placeholder="Folha de S.Paulo\nO Globo\nCorreio Braziliense"
+                )
+
+            with tab2:
+                arquivo_txt = st.file_uploader(
+                    "Suba seu arquivo .TXT com os nomes", 
+                    type=["txt"]
+                )
+
+            if st.button("🔎 Buscar Veículos"):
+                
+                lista_de_termos = []
+                if arquivo_txt:
+                    string_data = io.StringIO(arquivo_txt.getvalue().decode("utf-8")).read()
+                    lista_de_termos = [line.strip() for line in string_data.splitlines() if line.strip()]
+                elif nomes_colados.strip():
+                    lista_de_termos = [line.strip() for line in nomes_colados.strip().split('\n') if line.strip()]
+
+                if not lista_de_termos:
+                    st.warning("Por favor, forneça nomes de veículos para a busca.")
+                elif filtrar_regiao and not regioes_selecionadas:
+                    st.warning("Filtro de região ativado. Por favor, selecione pelo menos uma região.")
                 else:
                     with st.spinner("Buscando..."):
-                        # Converte a coluna para string para evitar erros e busca de forma case-insensitive
-                        resultados = df_mailing[
-                            df_mailing[coluna_veiculo].astype(str).str.contains(termo_busca, case=False, na=False)
-                        ]
+                        
+                        # Filtro inicial pelos nomes dos veículos
+                        padrao_busca = '|'.join(map(re.escape, lista_de_termos))
+                        df_resultados = df_mailing[
+                            df_mailing[coluna_veiculo].str.contains(padrao_busca, case=False, na=False)
+                        ].copy()
 
-                        if not resultados.empty:
-                            st.success(f"Encontramos {len(resultados)} resultado(s) para '{termo_busca}':")
-                            # Exibe os resultados em uma tabela interativa
-                            st.dataframe(resultados)
+                        # Aplica o filtro de região, se estiver ativo
+                        if filtrar_regiao and regioes_selecionadas:
+                            df_resultados = df_resultados[
+                                df_resultados[coluna_regiao].isin(regioes_selecionadas)
+                            ]
+
+                        if not df_resultados.empty:
+                            st.success(f"Encontramos {len(df_resultados)} resultado(s) para os critérios informados:")
+                            st.dataframe(df_resultados)
                         else:
-                            st.error(f"Nenhum veículo encontrado com o nome '{termo_busca}'. Verifique o nome e a coluna selecionada.")
+                            st.error("Nenhum resultado encontrado. Verifique os termos de busca, a região selecionada e as colunas.")
 
         except Exception as e:
-            st.error(f"Erro ao ler ou processar a planilha: {e}")
+            st.error(f"Ocorreu um erro: {e}")
