@@ -27,7 +27,7 @@ st.markdown(
 
     /* Contêiner principal com vidro fosco leve */
     section.main > div {
-        background-color: rgba(0, 0, 0, 0.65); /* um pouco mais escuro para destacar o texto azul */
+        background-color: rgba(0, 0, 0, 0.65);
         backdrop-filter: blur(12px);
         border-radius: 20px;
         padding: 2rem;
@@ -37,30 +37,30 @@ st.markdown(
 
     /* Títulos e textos com sombra */
     h1, h2, h3, h4, h5, h6, p, span, label {
-        color: #89CFF0; /* Tom de azul claro para excelente contraste */
-        text-shadow: 1px 1px 4px rgba(0,0,0,0.9); /* Sombra escura para destacar o texto */
+        color: #0D3B66; /* <<-- AQUI ESTÁ A MUDANÇA: Azul bem escuro */
+        text-shadow: 0 0 8px rgba(137, 207, 240, 0.7); /* <<-- E a sombra clara para contraste */
     }
 
-    /* Botões estilizados com o tema azul */
+    /* Botões estilizados com o tema azul claro para se destacarem */
     .stButton > button {
         width: 100%;
         border-radius: 8px;
-        border: 1px solid #89CFF0; /* Borda azul */
+        border: 1px solid #89CFF0;
         background-color: transparent;
-        color: #89CFF0; /* Texto do botão azul */
+        color: #89CFF0;
         font-weight: bold;
         transition: all 0.2s ease-in-out;
         box-shadow: 1px 1px 5px rgba(0,0,0,0.5);
     }
 
     .stButton > button:hover {
-        background-color: #89CFF0; /* Fundo azul ao passar o mouse */
-        color: #002366; /* Texto azul bem escuro para contraste */
+        background-color: #89CFF0;
+        color: #002366;
         border-color: #89CFF0;
     }
 
     .stButton > button:active {
-        background-color: #78b5d6; /* Tom de azul mais escuro para o clique */
+        background-color: #78b5d6;
         border-color: #78b5d6;
     }
 
@@ -70,15 +70,15 @@ st.markdown(
     .stFileUploader > div,
     .stTextArea > div > div > textarea {
         background-color: rgba(0,0,0,0.6);
-        color: #FAFAFA; /* Texto dentro dos inputs branco para legibilidade */
+        color: #FAFAFA;
         border-radius: 8px;
-        border: 1px solid rgba(137, 207, 240, 0.4); /* Borda azul sutil */
+        border: 1px solid rgba(137, 207, 240, 0.4);
         padding: 0.4rem;
     }
 
     /* Uploader de arquivos com destaque azul */
     .stFileUploader > div {
-        border: 2px dashed rgba(137, 207, 240, 0.6); /* Borda do uploader azul */
+        border: 2px dashed rgba(137, 207, 240, 0.6);
         background-color: rgba(137, 207, 240, 0.08);
         border-radius: 10px;
         padding: 0.5rem;
@@ -90,7 +90,7 @@ st.markdown(
     }
 
     ::-webkit-scrollbar-thumb {
-        background: rgba(137, 207, 240, 0.5); /* Scrollbar azul */
+        background: rgba(137, 207, 240, 0.5);
         border-radius: 5px;
     }
 
