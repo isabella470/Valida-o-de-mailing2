@@ -11,14 +11,14 @@ import re
 st.set_page_config(page_title="Validador de Escopo", layout="centered")
 
 # =============================
-# CSS com o tema Azul Marinho Escuro
+# CSS com o tema Azul Marinho Escuro e NOVA IMAGEM DE FUNDO
 # =============================
 st.markdown(
     """
     <style>
     /* Fundo da aplicação */
     .stApp {
-        background-image: url("https://raw.githubusercontent.com/isabella470/Valida-o-de-mailing2/main/Gemini_Generated_Image_hztkx7hztkx7hztk.png");
+        background-image: url("https://raw.githubusercontent.com/isabella470/Valida-o-de-mailing2/main/Gemini_Generated_Image_8y37d38y37d38y37.png"); /* <<-- NOVA IMAGEM DE FUNDO */
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
@@ -37,7 +37,7 @@ st.markdown(
 
     /* Títulos e textos com sombra - AZUL MARINHO ESCURO */
     h1, h2, h3, h4, h5, h6, p, span, label {
-        color: #000080; /* <<-- AQUI ESTÁ A MUDANÇA: Azul Marinho (Navy Blue) */
+        color: #000080; /* Azul Marinho (Navy Blue) */
         text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7); /* Sombra sutil para não branquear a cor */
     }
 
