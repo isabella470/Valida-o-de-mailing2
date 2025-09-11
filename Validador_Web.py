@@ -11,14 +11,14 @@ import re
 st.set_page_config(page_title="Validador de Escopo", layout="centered")
 
 # =============================
-# CSS com o tema Roxo Escuro e Contorno
+# CSS com o Tema Branco e Sombra de Contraste
 # =============================
 st.markdown(
     """
     <style>
     /* Fundo da aplicação */
     .stApp {
-        background-image: url("https://raw.githubusercontent.com/isabella470/Valida-o-de-mailing2/main/Gemini_Generated_Image_8y37d38y37d38y37.png");
+        background-image: url("https://raw.githubusercontent.com/isabella470/Valida-o-de-mailing2/main/Gemini_Generated_Image_ej6ecpej6ecpej6e.png");
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
@@ -35,32 +35,36 @@ st.markdown(
         border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
-    /* Títulos e textos com contorno para legibilidade */
+    /* Títulos e textos brancos com sombra escura para legibilidade */
     h1, h2, h3, h4, h5, h6, p, span, label {
-        color: #483D8B; /* Roxo Bem Escuro (DarkSlateBlue) */
-        -webkit-text-stroke: 1px rgba(220, 220, 220, 0.4); /* Contorno cinza claro sutil */
-        text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.8);
+        color: #FAFAFA; /* Letras Brancas */
+        text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.9); /* <<-- SOMBRA FORTE PARA CONTRASTE */
     }
 
-    /* Botões estilizados com um roxo mais claro para contraste */
+    /* Botões estilizados com o tema branco */
     .stButton > button {
         width: 100%;
         border-radius: 8px;
-        border: 1px solid #9370DB; /* Roxo médio */
+        border: 1px solid #FFFFFF;
         background-color: transparent;
-        color: #9370DB;
+        color: #FFFFFF;
         font-weight: bold;
         transition: all 0.2s ease-in-out;
         box-shadow: 1px 1px 5px rgba(0,0,0,0.5);
     }
 
     .stButton > button:hover {
-        background-color: #9370DB;
-        color: #FFFFFF;
-        border-color: #9370DB;
+        background-color: #FFFFFF;
+        color: #000000; /* Texto preto para contraste no botão branco */
+        border-color: #FFFFFF;
     }
 
-    /* Inputs, textarea e uploader legíveis */
+    .stButton > button:active {
+        background-color: #DDDDDD; /* Tom mais escuro para o clique */
+        border-color: #DDDDDD;
+    }
+
+    /* Inputs, textarea e uploader legíveis com o tema branco */
     .stTextInput > div > div > input,
     .stSelectbox > div > div,
     .stFileUploader > div,
@@ -68,13 +72,21 @@ st.markdown(
         background-color: rgba(0,0,0,0.6);
         color: #FAFAFA;
         border-radius: 8px;
-        border: 1px solid rgba(147, 112, 219, 0.4); /* Borda roxa sutil */
+        border: 1px solid rgba(255, 255, 255, 0.4); /* Borda branca sutil */
         padding: 0.4rem;
     }
+
+    /* Uploader de arquivos com destaque branco */
+    .stFileUploader > div {
+        border: 2px dashed rgba(255, 255, 255, 0.6);
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        padding: 0.5rem;
+    }
     
-    /* Scrollbars customizadas */
+    /* Scrollbars customizadas com o tema branco */
     ::-webkit-scrollbar { width: 10px; }
-    ::-webkit-scrollbar-thumb { background: rgba(147, 112, 219, 0.5); border-radius: 5px; }
+    ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.5); border-radius: 5px; }
     ::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
     </style>
     """,
@@ -116,7 +128,8 @@ def transformar_url_para_csv(url: str) -> str:
             sheet_id = match.group(1)
             return f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv"
     except:
-        return None
+        pass
+    return None
 
 # =============================
 # Lógica de validação
@@ -193,6 +206,6 @@ if url_planilha:
                     st.download_button(
                         label="📥 Baixar Relatório em Excel",
                         data=dados_excel,
-                        file_name="resultado_comparacao.xlsx", # <--- A VÍRGULA FOI ADICIONADA AQUI
+                        file_name="resultado_comparacao.xlsx",
                         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                     )
