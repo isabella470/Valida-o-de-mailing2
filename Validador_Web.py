@@ -11,14 +11,14 @@ import re
 st.set_page_config(page_title="Validador de Escopo", layout="centered")
 
 # =============================
-# CSS com fundo + vidro fosco
+# CSS com fundo + vidro fosco ATUALIZADO
 # =============================
 st.markdown(
     """
     <style>
     /* Fundo da aplicação */
     .stApp {
-        background-image: url("https://raw.githubusercontent.com/isabella470/Valida-o-de-mailing2/3d6b54a4c8b1b593e94856a84dd83d5e089404bf/abre.jpg");
+        background-image: url("https://raw.githubusercontent.com/isabella470/Valida-o-de-mailing2/main/Gemini_Generated_Image_hztkx7hztkx7hztk.png");
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
@@ -27,7 +27,7 @@ st.markdown(
 
     /* Contêiner principal com vidro fosco leve */
     section.main > div {
-        background-color: rgba(0, 0, 0, 0.6); /* mais escuro para destacar o texto */
+        background-color: rgba(0, 0, 0, 0.65); /* um pouco mais escuro para destacar o texto azul */
         backdrop-filter: blur(12px);
         border-radius: 20px;
         padding: 2rem;
@@ -37,60 +37,60 @@ st.markdown(
 
     /* Títulos e textos com sombra */
     h1, h2, h3, h4, h5, h6, p, span, label {
-        color: #FAFAFA;
-        text-shadow: 1px 1px 4px rgba(0,0,0,0.8);
+        color: #89CFF0; /* Tom de azul claro para excelente contraste */
+        text-shadow: 1px 1px 4px rgba(0,0,0,0.9); /* Sombra escura para destacar o texto */
     }
 
-    /* Botões estilizados */
+    /* Botões estilizados com o tema azul */
     .stButton > button {
         width: 100%;
         border-radius: 8px;
-        border: 1px solid #FF4B4B;
+        border: 1px solid #89CFF0; /* Borda azul */
         background-color: transparent;
-        color: #FF4B4B;
+        color: #89CFF0; /* Texto do botão azul */
         font-weight: bold;
         transition: all 0.2s ease-in-out;
         box-shadow: 1px 1px 5px rgba(0,0,0,0.5);
     }
 
     .stButton > button:hover {
-        background-color: #FF4B4B;
-        color: white;
-        border-color: #FF4B4B;
+        background-color: #89CFF0; /* Fundo azul ao passar o mouse */
+        color: #002366; /* Texto azul bem escuro para contraste */
+        border-color: #89CFF0;
     }
 
     .stButton > button:active {
-        background-color: #E03C3C;
-        border-color: #E03C3C;
+        background-color: #78b5d6; /* Tom de azul mais escuro para o clique */
+        border-color: #78b5d6;
     }
 
-    /* Inputs, textarea e uploader legíveis */
+    /* Inputs, textarea e uploader legíveis com tema azul */
     .stTextInput > div > div > input,
     .stSelectbox > div > div,
     .stFileUploader > div,
     .stTextArea > div > div > textarea {
         background-color: rgba(0,0,0,0.6);
-        color: #FAFAFA;
+        color: #FAFAFA; /* Texto dentro dos inputs branco para legibilidade */
         border-radius: 8px;
-        border: 1px solid rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(137, 207, 240, 0.4); /* Borda azul sutil */
         padding: 0.4rem;
     }
 
-    /* Uploader de arquivos com destaque */
+    /* Uploader de arquivos com destaque azul */
     .stFileUploader > div {
-        border: 2px dashed rgba(255, 75, 75, 0.6);
-        background-color: rgba(255, 75, 75, 0.08);
+        border: 2px dashed rgba(137, 207, 240, 0.6); /* Borda do uploader azul */
+        background-color: rgba(137, 207, 240, 0.08);
         border-radius: 10px;
         padding: 0.5rem;
     }
 
-    /* Scrollbars customizadas */
+    /* Scrollbars customizadas com tema azul */
     ::-webkit-scrollbar {
         width: 10px;
     }
 
     ::-webkit-scrollbar-thumb {
-        background: rgba(255, 75, 75, 0.5);
+        background: rgba(137, 207, 240, 0.5); /* Scrollbar azul */
         border-radius: 5px;
     }
 
