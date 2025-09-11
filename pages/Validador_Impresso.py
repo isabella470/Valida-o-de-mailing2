@@ -85,7 +85,7 @@ def transformar_url_para_csv(url: str) -> str:
 # =============================
 # Interface da página
 # =============================
-st.title("Painel de Validação de Impresso 📰")
+st.title("Painel Escopo Impresso📰")
 st.markdown("Busque por um ou mais veículos na sua planilha base de mailing, com filtro opcional por **região**.")
 
 url_planilha = st.text_input(
