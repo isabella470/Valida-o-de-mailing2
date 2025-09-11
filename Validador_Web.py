@@ -171,4 +171,6 @@ if url_planilha:
                         data=dados_excel,
                         file_name="resultado_comparacao.xlsx",
                         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                        color: #483D8B; /* <<-- Roxo Bem Escuro (DarkSlateBlue) */
                     )
+
