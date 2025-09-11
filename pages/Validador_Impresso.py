@@ -5,14 +5,14 @@ import re
 import io
 
 # =============================
-# CSS (mantido)
+# CSS com NOVA IMAGEM DE FUNDO
 # =============================
 st.markdown(
     """
     <style>
     /* Fundo da aplicação */
     .stApp {
-        background-image: url("https://raw.githubusercontent.com/isabella470/Valida-o-de-mailing2/3d6b54a4c8b1b593e94856a84dd83d5e089404bf/abre.jpg");
+        background-image: url("https://raw.githubusercontent.com/isabella470/Valida-o-de-mailing2/main/Gemini_Generated_Image_fv75gbfv75gbfv75.png"); /* <<-- NOVA IMAGEM DE FUNDO AQUI */
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
@@ -158,7 +158,7 @@ if url_planilha:
 
             with tab2:
                 arquivo_txt = st.file_uploader(
-                    "Suba seu arquivo .TXT com os nomes", 
+                    "Suba seu arquivo .TXT com os nomes",  
                     type=["txt"]
                 )
 
