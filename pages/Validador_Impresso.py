@@ -128,21 +128,21 @@ if url_planilha:
                 )
             with col2:
                 coluna_regiao = st.selectbox(
-                    "Coluna da 'Região'",  # <-- Texto alterado aqui
+                    "Coluna da 'Região'",
                     options=headers,
                     index=1 if len(headers) > 1 else 0
                 )
 
             # --- Passo 3: Filtro Opcional de Região ---
-            st.markdown("**Passo 3: Restringir a busca por região?**") # <-- Texto alterado aqui
-            filtrar_regiao = st.toggle("Ativar filtro de região") # <-- Texto alterado aqui
+            st.markdown("**Passo 3: Restringir a busca por região?**")
+            filtrar_regiao = st.toggle("Ativar filtro de região")
 
             regioes_selecionadas = []
             if filtrar_regiao:
                 # Pega valores únicos da coluna de região, remove nulos (NaN) e ordena
                 regioes_unicas = sorted(df_mailing[coluna_regiao].dropna().unique())
                 regioes_selecionadas = st.multiselect(
-                    "Selecione uma ou mais regiões", # <-- Texto alterado aqui
+                    "Selecione uma ou mais regiões",
                     options=regioes_unicas
                 )
 
@@ -178,11 +178,21 @@ if url_planilha:
                 else:
                     with st.spinner("Buscando..."):
                         
-                        # Filtro inicial pelos nomes dos veículos
-                        padrao_busca = '|'.join(map(re.escape, lista_de_termos))
+                        # ================================================================= #
+                        # CÓDIGO CORRIGIDO AQUI                                             #
+                        # ================================================================= #
+                        # Filtro inicial pelos nomes dos veículos (com correspondência exata)
+                        # Converte a lista de busca para minúsculas para uma comparação case-insensitive
+                        lista_de_termos_lower = [term.lower() for term in lista_de_termos]
+
+                        # Filtra o DataFrame verificando se o valor da coluna (também em minúsculas)
+                        # está na lista de termos de busca.
                         df_resultados = df_mailing[
-                            df_mailing[coluna_veiculo].str.contains(padrao_busca, case=False, na=False)
+                            df_mailing[coluna_veiculo].str.lower().isin(lista_de_termos_lower)
                         ].copy()
+                        # ================================================================= #
+                        # FIM DA CORREÇÃO                                                   #
+                        # ================================================================= #
 
                         # Aplica o filtro de região, se estiver ativo
                         if filtrar_regiao and regioes_selecionadas:
