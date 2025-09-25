@@ -153,7 +153,7 @@ if url_planilha:
             with tab1:
                 nomes_colados = st.text_area(
                     "Cole os nomes aqui (um por linha)",
-                    placeholder="Folha de S.Paulo\nO Globo\nCorreio Braziliense"
+                    placeholder="Folha de S.Paulo\nO Globo\nJornal que não existe\nCorreio Braziliense"
                 )
 
             with tab2:
@@ -176,35 +176,48 @@ if url_planilha:
                 elif filtrar_regiao and not regioes_selecionadas:
                     st.warning("Filtro de região ativado. Por favor, selecione pelo menos uma região.")
                 else:
-                    with st.spinner("Buscando..."):
+                    with st.spinner("Buscando e organizando resultados..."):
                         
                         # ================================================================= #
-                        # CÓDIGO CORRIGIDO AQUI (VERSÃO FINAL E ROBUSTA)                    #
-                        # ================================================================= #
-                        # Filtro inicial pelos nomes dos veículos (com correspondência exata e robusta)
-                        # Converte a lista de busca para minúsculas E remove espaços extras
-                        lista_de_termos_limpa = [term.lower().strip() for term in lista_de_termos]
-
-                        # Filtra o DataFrame garantindo que os valores da coluna também sejam
-                        # convertidos para minúsculas E tenham os espaços extras removidos antes de comparar.
-                        df_resultados = df_mailing[
-                            df_mailing[coluna_veiculo].str.lower().str.strip().isin(lista_de_termos_limpa)
-                        ].copy()
-                        # ================================================================= #
-                        # FIM DA CORREÇÃO                                                   #
+                        # NOVA LÓGICA DE BUSCA E CONSTRUÇÃO DE RESULTADO                    #
                         # ================================================================= #
 
-                        # Aplica o filtro de região, se estiver ativo
+                        # 1. Prepara o DataFrame para a busca
+                        df_para_busca = df_mailing.copy()
                         if filtrar_regiao and regioes_selecionadas:
-                            df_resultados = df_resultados[
-                                df_resultados[coluna_regiao].isin(regioes_selecionadas)
-                            ]
+                            df_para_busca = df_para_busca[df_para_busca[coluna_regiao].isin(regioes_selecionadas)]
+                        
+                        # Cria uma coluna de busca otimizada (minúscula e sem espaços)
+                        df_para_busca['search_col'] = df_para_busca[coluna_veiculo].astype(str).str.lower().str.strip()
 
-                        if not df_resultados.empty:
-                            st.success(f"Encontramos {len(df_resultados)} resultado(s) para os critérios informados:")
-                            st.dataframe(df_resultados)
+                        # 2. Itera sobre a lista de termos original para manter a ordem
+                        resultados_finais = []
+                        for termo_original in lista_de_termos:
+                            termo_limpo = termo_original.lower().strip()
+                            
+                            # Procura pelo termo na coluna otimizada
+                            match = df_para_busca[df_para_busca['search_col'] == termo_limpo]
+
+                            if not match.empty:
+                                # 3a. Se encontrou, adiciona os resultados encontrados
+                                resultados_finais.append(match.drop(columns=['search_col']))
+                            else:
+                                # 3b. Se não encontrou, cria uma linha de placeholder
+                                placeholder_data = {col: 'Não encontrado' for col in df_mailing.columns}
+                                placeholder_data[coluna_veiculo] = termo_original # Usa o nome original
+                                placeholder_df = pd.DataFrame([placeholder_data])
+                                resultados_finais.append(placeholder_df)
+                        
+                        # 4. Consolida e exibe os resultados
+                        if resultados_finais:
+                            df_resultados_final = pd.concat(resultados_finais, ignore_index=True)
+                            st.success("Busca concluída! Exibindo resultados na ordem solicitada:")
+                            st.dataframe(df_resultados_final)
                         else:
-                            st.error("Nenhum resultado encontrado. Verifique os termos de busca, a região selecionada e as colunas.")
+                            st.error("Nenhum termo foi fornecido para a busca.")
+                        # ================================================================= #
+                        # FIM DA NOVA LÓGICA                                                #
+                        # ================================================================= #
 
         except Exception as e:
             st.error(f"Ocorreu um erro: {e}")
