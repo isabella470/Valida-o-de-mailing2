@@ -179,16 +179,16 @@ if url_planilha:
                     with st.spinner("Buscando..."):
                         
                         # ================================================================= #
-                        # CÓDIGO CORRIGIDO AQUI                                             #
+                        # CÓDIGO CORRIGIDO AQUI (VERSÃO FINAL E ROBUSTA)                    #
                         # ================================================================= #
-                        # Filtro inicial pelos nomes dos veículos (com correspondência exata)
-                        # Converte a lista de busca para minúsculas para uma comparação case-insensitive
-                        lista_de_termos_lower = [term.lower() for term in lista_de_termos]
+                        # Filtro inicial pelos nomes dos veículos (com correspondência exata e robusta)
+                        # Converte a lista de busca para minúsculas E remove espaços extras
+                        lista_de_termos_limpa = [term.lower().strip() for term in lista_de_termos]
 
-                        # Filtra o DataFrame verificando se o valor da coluna (também em minúsculas)
-                        # está na lista de termos de busca.
+                        # Filtra o DataFrame garantindo que os valores da coluna também sejam
+                        # convertidos para minúsculas E tenham os espaços extras removidos antes de comparar.
                         df_resultados = df_mailing[
-                            df_mailing[coluna_veiculo].str.lower().isin(lista_de_termos_lower)
+                            df_mailing[coluna_veiculo].str.lower().str.strip().isin(lista_de_termos_limpa)
                         ].copy()
                         # ================================================================= #
                         # FIM DA CORREÇÃO                                                   #
