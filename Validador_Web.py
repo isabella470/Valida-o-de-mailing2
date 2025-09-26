@@ -11,7 +11,7 @@ import re
 st.set_page_config(page_title="Validador de Escopo", layout="centered")
 
 # =============================
-# CSS com o Tema Branco e Sombra de Contraste
+# CSS com o Tema (sem alterações)
 # =============================
 st.markdown(
     """
@@ -105,7 +105,7 @@ url_planilha = st.text_input(
 )
 
 # =============================
-# Funções utilitárias
+# Funções utilitárias (sem alterações)
 # =============================
 def extrair_dominio_limpo(url: str) -> str:
     if not isinstance(url, str): 
@@ -132,7 +132,7 @@ def transformar_url_para_csv(url: str) -> str:
     return None
 
 # =============================
-# Lógica de validação
+# Lógica de validação (MODIFICADA)
 # =============================
 if url_planilha:
     url_csv = transformar_url_para_csv(url_planilha)
@@ -141,7 +141,10 @@ if url_planilha:
     else:
         with st.spinner("Lendo cabeçalhos da planilha..."):
             try:
-                df_mailing = pd.read_csv(url_csv)
+                df_mailing = pd.read_csv(url_csv, on_bad_lines='skip')
+                # Garante que todas as colunas sejam tratadas como texto para evitar erros no .str.contains
+                for col in df_mailing.columns:
+                    df_mailing[col] = df_mailing[col].astype(str)
             except Exception as e:
                 st.error(f"Erro ao ler CSV da planilha: {e}")
                 st.stop()
@@ -149,42 +152,89 @@ if url_planilha:
             headers = list(df_mailing.columns)
         st.success("Planilha lida com sucesso!")
 
+        # Passo 2 - Selecionar coluna de URL (para normalização)
         coluna_url_selecionada = st.selectbox(
-            "Passo 2: Da lista abaixo, qual coluna contém os URLs?",
+            "Passo 2: Qual coluna contém os URLs para extração de domínio?",
             options=headers,
-            index=3 if len(headers) > 3 else 0
+            index=3 if len(headers) > 3 else 0,
+            help="Esta coluna será usada para criar uma base de domínios limpos para a busca exata."
         )
 
-        st.markdown("**Passo 3: Escolha como deseja fornecer os links para comparação:**")
-        tab1, tab2 = st.tabs(["📄 Upload de TXT", "✏️ Colar links"])
+        # >>> NOVO: Passo 3 - Selecionar coluna onde a busca será feita
+        coluna_busca_selecionada = st.selectbox(
+            "Passo 3: Em qual coluna da planilha você quer buscar?",
+            options=headers,
+            index=3 if len(headers) > 3 else 0,
+            help="Seus termos de busca serão comparados com o conteúdo desta coluna."
+        )
 
-        # --- Opção 1: Upload de TXT ---
+        # >>> NOVO: Passo 4 - Escolher o método de busca
+        metodo_busca = st.radio(
+            "Passo 4: Como você quer buscar?",
+            options=["Correspondência Parcial (Contém o termo)", "Correspondência Exata do Domínio"],
+            horizontal=True,
+            help=(
+                "**Parcial:** Busca se o seu termo (ex: 'globo') aparece em qualquer parte do texto da coluna selecionada.\n\n"
+                "**Exata:** Compara o domínio limpo do seu link (ex: 'globo.com') com o domínio limpo da coluna de URL."
+            )
+        )
+
+        st.markdown("**Passo 5: Forneça os termos ou links para comparação:**")
+        tab1, tab2 = st.tabs(["📄 Upload de TXT", "✏️ Colar Texto"])
+
         with tab1:
-            arquivo_txt = st.file_uploader("Suba seu arquivo .TXT com os links", type=["txt"])
+            arquivo_txt = st.file_uploader("Suba seu arquivo .TXT com os termos de busca", type=["txt"])
 
-        # --- Opção 2: Colar links ---
         with tab2:
             links_colados = st.text_area(
-                "Cole seus links aqui (um por linha)",
-                placeholder="https://exemplo.com\nhttps://teste.com"
+                "Cole seus termos ou links aqui (um por linha)",
+                placeholder="exemplo.com\nportal de teste\nhttps://outrodominio.net"
             )
 
         if st.button("✅ Gerar Relatório"):
             if (arquivo_txt is None) and (not links_colados.strip()):
-                st.warning("Por favor, forneça os links via arquivo ou colando na tela.")
+                st.warning("Por favor, forneça os termos para busca via arquivo ou colando na tela.")
             else:
-                with st.spinner("Processando..."):
+                with st.spinner("Processando... Cruzando informações..."):
+                    # Prepara o DataFrame da planilha base
                     df_mailing["dominio_limpo"] = df_mailing[coluna_url_selecionada].apply(extrair_dominio_limpo)
-
+                    
+                    # Prepara o DataFrame com os termos a serem buscados
                     if arquivo_txt:
-                        df_verificacao = pd.read_csv(arquivo_txt, header=None, names=["Link_Original"])
+                        df_verificacao = pd.read_csv(arquivo_txt, header=None, names=["Termo_Busca"])
                     else:
                         lista_links = [l.strip() for l in links_colados.strip().split("\n") if l.strip()]
-                        df_verificacao = pd.DataFrame(lista_links, columns=["Link_Original"])
+                        df_verificacao = pd.DataFrame(lista_links, columns=["Termo_Busca"])
 
-                    df_verificacao["dominio_limpo"] = df_verificacao["Link_Original"].apply(extrair_dominio_limpo)
+                    # >>> LÓGICA DE BUSCA ATUALIZADA <<<
+                    resultados_encontrados = []
+                    
+                    if metodo_busca == "Correspondência Exata do Domínio":
+                        # Limpa os termos de busca para extrair domínios
+                        df_verificacao["dominio_limpo"] = df_verificacao["Termo_Busca"].apply(extrair_dominio_limpo)
+                        # Faz o merge (junção) pela coluna de domínio limpo
+                        resultado_merge = pd.merge(df_verificacao, df_mailing, on="dominio_limpo", how="left")
+                    
+                    else: # Correspondência Parcial (Contém o termo)
+                        # Itera por cada termo a ser buscado
+                        for termo in df_verificacao["Termo_Busca"]:
+                            # Busca o termo na coluna selecionada da planilha base (ignora maiúsculas/minúsculas)
+                            # O 'na=False' evita erros se houver células vazias
+                            match = df_mailing[df_mailing[coluna_busca_selecionada].str.contains(termo, case=False, na=False, regex=False)]
+                            
+                            if not match.empty:
+                                # Se encontrou, pega a primeira correspondência
+                                primeiro_resultado = match.iloc[0].to_dict()
+                                primeiro_resultado["Termo_Busca"] = termo
+                                resultados_encontrados.append(primeiro_resultado)
+                            else:
+                                # Se não encontrou, adiciona um registro vazio
+                                resultados_encontrados.append({"Termo_Busca": termo})
+                        
+                        # Constrói o DataFrame final a partir da lista de resultados
+                        resultado_merge = pd.DataFrame(resultados_encontrados)
 
-                    resultado_merge = pd.merge(df_verificacao, df_mailing, on="dominio_limpo", how="left")
+                    # --- Lógica para montagem do relatório final (comum aos dois métodos) ---
                     primeira_coluna_mailing = df_mailing.columns[0]
                     resultado_merge["Status"] = np.where(
                         resultado_merge[primeira_coluna_mailing].notna(),
@@ -193,9 +243,22 @@ if url_planilha:
                     )
 
                     colunas_do_mailing = [c for c in df_mailing.columns if c != "dominio_limpo"]
-                    colunas_finais = ["Link_Original", "Status"] + colunas_do_mailing
+                    # Renomeia a coluna de busca para 'Termo_Original' se necessário
+                    if 'Termo_Busca' in resultado_merge.columns:
+                        resultado_merge = resultado_merge.rename(columns={'Termo_Busca': 'Termo_Original'})
+                    elif 'Link_Original' in resultado_merge.columns:
+                         resultado_merge = resultado_merge.rename(columns={'Link_Original': 'Termo_Original'})
+                    
+                    # Organiza as colunas para o resultado final
+                    colunas_finais = ["Termo_Original", "Status"] + colunas_do_mailing
+                    # Garante que todas as colunas necessárias existam, preenchendo com nulo se faltar
+                    for col in colunas_finais:
+                        if col not in resultado_merge.columns:
+                            resultado_merge[col] = np.nan
+                    
                     resultado_final = resultado_merge[colunas_finais]
 
+                    # Geração do arquivo Excel para download
                     output = io.BytesIO()
                     with pd.ExcelWriter(output, engine="openpyxl") as writer:
                         resultado_final.to_excel(writer, index=False, sheet_name="Resultado")
@@ -206,8 +269,6 @@ if url_planilha:
                     st.download_button(
                         label="📥 Baixar Relatório em Excel",
                         data=dados_excel,
-                        file_name="resultado_comparacao.xlsx",
+                        file_name="resultado_validacao_escopo.xlsx",
                         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                     )
-
-
