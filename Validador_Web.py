@@ -97,7 +97,7 @@ st.markdown(
 # Interface inicial
 # =============================
 st.title("Painel Escopo Web 📊")
-st.markdown("Busque por um ou mais veículos na sua planilha base de mailing")
+st.markdown("Busque por um ou mais veículos (por nome ou URL) na sua planilha base de mailing.")
 
 url_planilha = st.text_input(
     "Passo 1: Cole o link da sua planilha",
@@ -149,42 +149,86 @@ if url_planilha:
         headers = list(df_mailing.columns)
         st.success("Planilha lida com sucesso!")
 
-        coluna_url_selecionada = st.selectbox(
-            "Passo 2: Da lista abaixo, qual coluna contém os URLs?",
-            options=headers,
-            index=3 if len(headers) > 3 else 0
-        )
+        st.markdown("**Passo 2: Selecione as colunas para a busca**")
+        col1, col2 = st.columns(2)
+        with col1:
+            coluna_url_selecionada = st.selectbox(
+                "Qual coluna contém os URLs?",
+                options=headers,
+                index=3 if len(headers) > 3 else 0
+            )
+        with col2:
+            coluna_nome_selecionada = st.selectbox(
+                "Qual coluna contém os Nomes?",
+                options=headers,
+                index=1 if len(headers) > 1 else 0
+            )
 
-        st.markdown("**Passo 3: Escolha como deseja fornecer os links para comparação:**")
-        tab1, tab2 = st.tabs(["📄 Upload de TXT", "✏️ Colar links"])
+        st.markdown("**Passo 3: Forneça os links ou nomes para comparação**")
+        tab1, tab2 = st.tabs(["📄 Upload de TXT", "✏️ Colar dados"])
 
         # --- Opção 1: Upload de TXT ---
         with tab1:
-            arquivo_txt = st.file_uploader("Suba seu arquivo .TXT com os links", type=["txt"])
+            arquivo_txt = st.file_uploader("Suba seu arquivo .TXT com os dados", type=["txt"])
 
-        # --- Opção 2: Colar links ---
+        # --- Opção 2: Colar dados ---
         with tab2:
-            links_colados = st.text_area(
-                "Cole seus links aqui (um por linha)",
-                placeholder="https://exemplo.com\nhttps://teste.com"
+            dados_colados = st.text_area(
+                "Cole seus links ou nomes aqui (um por linha)",
+                placeholder="https://exemplo.com\nNome do Veículo\nhttps://teste.com.br"
             )
 
         if st.button("✅ Gerar Relatório"):
-            if (arquivo_txt is None) and (not links_colados.strip()):
-                st.warning("Por favor, forneça os links via arquivo ou colando na tela.")
+            if (arquivo_txt is None) and (not dados_colados.strip()):
+                st.warning("Por favor, forneça os dados via arquivo ou colando na tela.")
             else:
                 with st.spinner("Processando..."):
-                    df_mailing["dominio_limpo"] = df_mailing[coluna_url_selecionada].apply(extrair_dominio_limpo)
-
+                    # --- Preparação dos dados de verificação ---
                     if arquivo_txt:
-                        df_verificacao = pd.read_csv(arquivo_txt, header=None, names=["Link_Original"])
+                        df_verificacao = pd.read_csv(arquivo_txt, header=None, names=["Termo_Original"])
                     else:
-                        lista_links = [l.strip() for l in links_colados.strip().split("\n") if l.strip()]
-                        df_verificacao = pd.DataFrame(lista_links, columns=["Link_Original"])
+                        lista_termos = [l.strip() for l in dados_colados.strip().split("\n") if l.strip()]
+                        df_verificacao = pd.DataFrame(lista_termos, columns=["Termo_Original"])
 
-                    df_verificacao["dominio_limpo"] = df_verificacao["Link_Original"].apply(extrair_dominio_limpo)
+                    # --- Preparação da base de mailing para busca ---
+                    df_mailing["dominio_limpo"] = df_mailing[coluna_url_selecionada].apply(extrair_dominio_limpo)
+                    df_mailing["nome_limpo"] = df_mailing[coluna_nome_selecionada].astype(str).str.strip().str.lower()
+                    
+                    # --- Cria uma chave de busca para os termos inseridos ---
+                    df_verificacao['dominio_termo'] = df_verificacao['Termo_Original'].apply(extrair_dominio_limpo)
+                    df_verificacao['nome_termo'] = df_verificacao['Termo_Original'].astype(str).str.strip().str.lower()
+                    
+                    # --- Merge por URL/Domínio primeiro ---
+                    resultado_merge = pd.merge(
+                        df_verificacao,
+                        df_mailing,
+                        left_on="dominio_termo",
+                        right_on="dominio_limpo",
+                        how="left"
+                    )
 
-                    resultado_merge = pd.merge(df_verificacao, df_mailing, on="dominio_limpo", how="left")
+                    # --- Para os não encontrados, tenta o merge por Nome ---
+                    nao_encontrados = resultado_merge[resultado_merge[coluna_nome_selecionada].isna()].copy()
+                    if not nao_encontrados.empty:
+                        # Mantém apenas as colunas originais de verificação para o segundo merge
+                        colunas_verif = df_verificacao.columns
+                        nao_encontrados = nao_encontrados[colunas_verif]
+                        
+                        # Segundo merge por nome
+                        merge_nomes = pd.merge(
+                            nao_encontrados,
+                            df_mailing,
+                            left_on="nome_termo",
+                            right_on="nome_limpo",
+                            how="left"
+                        )
+                        # Atualiza o resultado principal com os encontrados por nome
+                        resultado_merge.update(merge_nomes)
+                    
+                    # Remove duplicatas que possam ter sido geradas, mantendo a primeira ocorrência
+                    resultado_merge.drop_duplicates(subset=["Termo_Original"], inplace=True)
+
+                    # --- Formatação do relatório final ---
                     primeira_coluna_mailing = df_mailing.columns[0]
                     resultado_merge["Status"] = np.where(
                         resultado_merge[primeira_coluna_mailing].notna(),
@@ -192,10 +236,11 @@ if url_planilha:
                         "FORA DO ESCOPO"
                     )
 
-                    colunas_do_mailing = [c for c in df_mailing.columns if c != "dominio_limpo"]
-                    colunas_finais = ["Link_Original", "Status"] + colunas_do_mailing
+                    colunas_do_mailing = [c for c in df_mailing.columns if c not in ["dominio_limpo", "nome_limpo"]]
+                    colunas_finais = ["Termo_Original", "Status"] + colunas_do_mailing
                     resultado_final = resultado_merge[colunas_finais]
 
+                    # --- Geração do arquivo Excel para download ---
                     output = io.BytesIO()
                     with pd.ExcelWriter(output, engine="openpyxl") as writer:
                         resultado_final.to_excel(writer, index=False, sheet_name="Resultado")
